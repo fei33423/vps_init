@@ -5,11 +5,11 @@ Automatically push all git repo in current directory.
 import os
 repo = os.listdir()
 outlier = []
-command = input('Do you want to push(defaut) or pull?')
+command = input('Do you want to push (defaut) or pull? ')
 if command == '':
     command = 'push'
 def exception():
-    ask = input("Are there any repo you don't want to {}?(y/n)".format(command))
+    ask = input("Are there any repo you don't want to {}?(y/n) ".format(command))
     if ask == 'n' or ask == '':
         pass
     else:

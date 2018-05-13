@@ -3,6 +3,7 @@
 Automatically push all git repo in current directory.
 """
 import os
+home = os.getcwd()
 repo = os.listdir()
 outlier = []
 command = input('Do you want to push (defaut) or pull? ')
@@ -23,7 +24,7 @@ for i in repo:
     if '.' in i or i in outlier:
         continue
 
-    os.chdir('/home/david/git/{}'.format(i))
+    os.chdir('{home}/{repo}'.format(home = home, repo = i))
     
     try:
         print('P{}ing {}'.format(command[1:], i))
@@ -35,6 +36,6 @@ for i in repo:
     
     print('Finished!')
     print('=' * 50)
-    os.chdir('/home/david/git')
+    os.chdir(home)
 
 print('All finished!')

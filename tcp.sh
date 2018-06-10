@@ -5,12 +5,12 @@ export PATH
 #=================================================
 #	System Required: CentOS 6+,Debian7+,Ubuntu12+
 #	Description: BBR+BBR魔改版+Lotserver
-#	Version: 1.1.4
+#	Version: 1.1.6
 #	Author: 千影
 #	Blog: https://www.94ish.me/
 #=================================================
 
-sh_ver="1.1.4"
+sh_ver="1.1.6"
 github="raw.githubusercontent.com/chiakge/Linux-NetSpeed/master"
 
 Green_font_prefix="\033[32m" && Red_font_prefix="\033[31m" && Green_background_prefix="\033[42;37m" && Red_background_prefix="\033[41;37m" && Font_color_suffix="\033[0m"
@@ -182,28 +182,20 @@ startlotserver(){
 	memory1=`expr ${memory} / 1024`
 	memory2=`expr ${memory1} \* 8`
 	cpucore=`cat /proc/cpuinfo | grep “processor” | wc -l`
-	ping1=`ping 140.205.230.3  -s 1000 -c 10 | awk -F"[= ]*"   '/from/{sum+=$(NF-1);}END{print sum/10;}' | awk -F "." '{print $1}'`
-	sed -i '/initialCwndWan/d' /appex/etc/config
 	sed -i '/l2wQLimit/d' /appex/etc/config
 	sed -i '/w2lQLimit/d' /appex/etc/config
-	sed -i '/SmBurstMS/d' /appex/etc/config
 	sed -i '/engineNum/d' /appex/etc/config
-	sed -i '/shortRttMS/d' /appex/etc/config
-	initialCwndWan=`expr ${ping1} / 3`
-	SmBurstMS=`expr ${ping1} / 9`
 	l2wQLimit="${memory1} ${memory2}"
-	echo -e "initialCwndWan=\"${initialCwndWan}\"
-l2wQLimit=\"${l2wQLimit}\"
+	echo -e "l2wQLimit=\"${l2wQLimit}\"
 w2lQLimit=\"${l2wQLimit}\"
-SmBurstMS=\"${SmBurstMS}\"
-engineNum=\"${cpucore}\"
-shortRttMS=\"${initialCwndWan}\"">>/appex/etc/config
+engineNum=\"${cpucore}\"">>/appex/etc/config
 	bash /appex/bin/serverSpeeder.sh restart
 	start_menu
 }
 
 #卸载全部加速
 remove_all(){
+	rm -rf bbrmod
 	sed -i '/net.core.default_qdisc/d' /etc/sysctl.conf
     sed -i '/net.ipv4.tcp_congestion_control/d' /etc/sysctl.conf
 	if [[ -e /appex/bin/serverSpeeder.sh ]]; then
@@ -546,7 +538,7 @@ check_sys_Lotsever(){
 
 check_status(){
 	kernel_version=`uname -r | awk -F "-" '{print $1}'`
-	if [[ ${kernel_version} = "4.11.8" ]]; then
+	if [[ `echo ${kernel_version} | awk -F'.' '{print $1}'` == "4" ]] && [[ `echo ${kernel_version} | awk -F'.' '{print $2}'` -ge 9 ]]; then
 		kernel_status="BBR"
 	elif [[ ${kernel_version} = "3.10.0" || ${kernel_version} = "3.16.0" || ${kernel_version} = "3.2.0" || ${kernel_version} = "4.4.0" || ${kernel_version} = "3.13.0"  || ${kernel_version} = "2.6.32" ]]; then
 		kernel_status="Lotserver"
